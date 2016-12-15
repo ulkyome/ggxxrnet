@@ -3181,7 +3181,7 @@ void test(void)
 	memcpy(buf, res, res_size);
 
 	SETFCW(DEFAULT_CW);
-
+	
     Document d;
     d.Parse(res);
 
