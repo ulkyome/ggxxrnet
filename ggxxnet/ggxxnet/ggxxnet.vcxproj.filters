@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source code files">
+      <UniqueIdentifier>{ce057973-ba09-41b3-8655-4f6d33938bb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{03a57186-2691-48f7-9307-3f55d7461f4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{1cf31253-6901-4b0d-b25c-f1f9e7d498e4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\ggxxnet80.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\icon1.ico">
+      <Filter>resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cpuid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dfont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="denylist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dynArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ggxxnet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="internet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ggxxinterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="md5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rc4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sharedMemory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="icon.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="internet.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="md5.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="netMgr.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="node.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="rc4.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpuid.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dfont.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="denylist.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="ggxxnet.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="sharedMemory.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="setting.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ggxxnet.def">
+      <Filter>Source code files</Filter>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
