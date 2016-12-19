@@ -1114,6 +1114,7 @@ void ggn_startNetVS(void)
 
 	if (useLobbyServer())
 	{
+		configServer();
 		enterServer(0);
 		readServer();
 	}
@@ -3164,32 +3165,29 @@ void ggn_render(void)
 	}
 #endif
 }
-void test(void)
+void configServer(void)
 {
 	const int bufsize = 1024 * 1024;
 	char* buf = new char[bufsize];
 	char *server, *script;
 	getscpiptaddr(server, script);
 
-	sprintf(buf, "{\"cmd\":\"config\",\"name\":\"%s\", \"password\":\"%s\"}",
+	sprintf(buf, "{\"cmd\":\"config\",\"name\":\"%s\",\"password\":\"%s\"}",
 		g_setting.userName,
 		g_setting.pass
 	);
 	int res_size = internet_post(buf, strlen(buf), bufsize, server, script);
 
-	char* res = new char[res_size];
-	memcpy(buf, res, res_size);
+	/*char* res = new char[res_size];
+	memcpy(buf, res, res_size);*/
 
 	SETFCW(DEFAULT_CW);
 	 
-    Document d;
-    d.Parse(res);
+    Document dataJson;
+	dataJson.Parse(buf);
 
-    Value& s = d["key1"];
-	char* errM;
-	
-	sprintf(errM, "%s", res);
-	MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
+    Value& result = dataJson["result"];
+	//MessageBox(*GGXX_HWND, result.GetString(), "Ok", MB_OK);
 
 	//s.SetInt(s.GetInt() + 1);
 	//s.GetString()
@@ -3232,11 +3230,10 @@ void test(void)
 }
 void enterServer(bool p_busy)
 {
-	test();
+	const int bufsize = 1024 * 1024;
+	char* buf = new char[bufsize];
 	char *server, *script;
 	getscpiptaddr(server, script);
-
-	char buf[1024];
 
 	sprintf(buf, "{\"cmd\":\"enter\",\"name\":\"%s\", \"password\":\"%s\", \"port\":\"%d\", \"delay\":\"%d\", \"wins\":\"%d\", \"rank\":\"%c\", \"score\":\"%d\", \"totalBattle\":\"%d\", \"totalWin\":\"%d\", \"totalLose\":\"%d\", \"totalDraw\":\"%d\", \"totalError\":\"%d\", \"msg\":\"%s\", \"busy\":\"%d\", \"lobby_ver\":\"%d\", \"useEx\":\"%d\"}",
 		g_setting.userName,
@@ -3256,7 +3253,7 @@ void enterServer(bool p_busy)
 		LOBBY_VER,
 		g_setting.useEx);
 
-	internet_post(buf, strlen(buf), 1024, server, script);
+	int res_size = internet_post(buf, strlen(buf), bufsize, server, script);
 
 	/*
 	Set the CW to deal with synchronization shift with a small number of round-off error
@@ -3266,13 +3263,60 @@ void enterServer(bool p_busy)
 	*/
 	SETFCW(DEFAULT_CW);
 
-	/* Extracting a section of the header-footer (since that may be added by including free mackerel) */
-	char errH[13] = "error code: ";
+	Document dataJson;
+	dataJson.Parse(buf);
+
+	Value& result = dataJson["result"];
+	Value& user_ip = dataJson["user_ip"];
+	Value& user_port = dataJson["user_port"];
+	Value& time = dataJson["time"];
+	Value& server_pass = dataJson["server_pass"];
+
+	MessageBox(*GGXX_HWND, result.GetString(), "Ok", MB_OK);
 	char* errM;
-	//testCurl("\"{\"cmd\":\"enter2\"}", "sadasd");
-	char* ptr = strstr(buf, "##head##");
-	//MessageBox(*GGXX_HWND, ptr, "Ok", MB_OK);
-	if (ptr == NULL){
+
+	if (result.GetString() == "OK") {
+		MessageBox(*GGXX_HWND, result.GetString(), "LOL", MB_OK);
+	}
+	else if (result.GetString() == "ok") {
+		MessageBox(*GGXX_HWND, result.GetString(), "LOL", MB_OK);
+	}
+	else if (result.GetString() == "ERORR") {
+		sprintf(errM, "Error %s\n", result.GetString());
+		DBGOUT_NET(errM);
+		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
+		return;
+		DestroyWindow(*GGXX_HWND);
+	}
+	else if (result.GetString() == "ERORR#AA01") {
+		sprintf(errM, "Error %s\n", result.GetString());
+		DBGOUT_NET(errM);
+		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
+		return;
+		DestroyWindow(*GGXX_HWND);
+	}
+	else if (result.GetString() == "ERORR#AA02") {
+		sprintf(errM, "Error %s\n", result.GetString());
+		DBGOUT_NET(errM);
+		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
+		return;
+		DestroyWindow(*GGXX_HWND);
+	}
+	else
+	{
+		sprintf(errM, "unError %s\n", result.GetString());
+		DBGOUT_NET(errM);
+		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
+		return;
+		//DestroyWindow(*GGXX_HWND);
+	}
+
+	char* ptr;
+	sprintf(ptr, "%s:%s", user_ip.GetString(), user_port.GetString());
+
+	/*char* ptr = strstr(buf, "##head##");
+	//MessageBox(*GGXX_HWND, ptr, "Ok", MB_OK);*/
+	/*if (ptr == NULL){
 		DBGOUT_NET("Server offline\n");
 		MessageBox(*GGXX_HWND, "Error server offline.\n", "Ok", MB_OK);
 		DestroyWindow(*GGXX_HWND);
@@ -3283,51 +3327,7 @@ void enterServer(bool p_busy)
 	//MessageBox(*GGXX_HWND, end, "Ok", MB_OK);
 	if (end==NULL) return;
 	ptr += 8;
-	*end = '\0';
-	
-
-	if (!strcmp(ptr,"ERORR")){
-		DBGOUT_NET("error\n");
-		sprintf(errM, "Error ******.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
-	else if (!strcmp(ptr, "ERORR#AA02")){
-		DBGOUT_NET("auth error\n");
-		sprintf(errM, "Error auth.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
-	else if (!strcmp(ptr, "ERORR#AA03")){
-		DBGOUT_NET("vtext error\n");
-		sprintf(errM, "Error input pr.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
-	else if (!strcmp(ptr, "ERORR#AA04")){
-		DBGOUT_NET("DISP error\n");
-		sprintf(errM, "Error D.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
-	else if (!strcmp(ptr, "ERORR#AA05")){
-		DBGOUT_NET("OFF error\n");
-		sprintf(errM, "Error server offline.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
-	else if (!strcmp(ptr, "ERORR#AA06")){
-		DBGOUT_NET("BAN error\n");
-		sprintf(errM, "Ban user.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
-	else if (!strcmp(ptr, "ERORR#AA07")){
-		DBGOUT_NET("NULLPR error\n");
-		sprintf(errM, "Error null input pr.\n %s%s", errH, ptr);
-		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
-		DestroyWindow(*GGXX_HWND);
-	}
+	*end = '\0';*/
 
 	g_nodeMgr->setOwnNode(ptr);
 

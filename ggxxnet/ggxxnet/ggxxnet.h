@@ -393,4 +393,4 @@ void DBGOUT_LOG(char* fmt, ...);
 void WRITE_DEBUGLOG(char* p_cause);
 void WRITE_REPLAY_RAWDATA(int p_size);
 
-void test();
+void configServer();
