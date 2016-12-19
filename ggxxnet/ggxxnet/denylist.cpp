@@ -25,8 +25,8 @@ CDenyListMgr* g_denyListMgr = NULL;
 //******************************************************************
 CDenyEntry::CDenyEntry(char* p_name, char* p_id)
 {
-	__strncpy(m_name, p_name, 29);
-	memcpy(m_id, p_id, 10);
+	/*__strncpy(m_name, p_name, 29);
+	memcpy(m_id, p_id, 10);*/
 }
 
 CDenyListMgr::CDenyListMgr(void)
@@ -35,31 +35,31 @@ CDenyListMgr::CDenyListMgr(void)
 
 CDenyListMgr::~CDenyListMgr(void)
 {
-	deleteAll();
+	//deleteAll();
 }
 
 void CDenyListMgr::add(char* p_name, char* p_id)
 {
-	int idx = find(p_id);
+	/*int idx = find(p_id);
 	if (idx == -1)
 	{
 		m_list.add(new CDenyEntry(p_name, p_id));
-	}
+	}*/
 }
 
 void CDenyListMgr::remove(char* p_mac)
 {
-	int idx = find(p_mac);
+	/*int idx = find(p_mac);
 	if (idx != -1)
 	{
 		delete m_list[idx];
 		m_list.remove(idx);
-	}
+	}*/
 }
 
 int CDenyListMgr::find(char* p_id)
 {
-	if (idcmp((BYTE*)p_id, INVALID_MID)) return -2;
+	/*if (idcmp((BYTE*)p_id, INVALID_MID)) return -2;
 
 	for (int i = 0; i < m_list.size(); i++)
 	{
@@ -72,18 +72,18 @@ int CDenyListMgr::find(char* p_id)
 		{
 			if (idcmp((BYTE*)m_list[i]->m_id, (BYTE*)p_id)) return i;
 		}
-	}
+	}*/
 	return -1;
 }
 
 void CDenyListMgr::deleteAll(void)
 {
-	m_list.deleteAll();
+	//m_list.deleteAll();
 }
 
 void CDenyListMgr::readfile(void)
 {
-	FILE *fp = fopen("./data/denylist.dta", "r");
+	/*FILE *fp = fopen("./data/denylist.dta", "r");
 	if (fp) 
 	{
 		char str[1024];
@@ -111,12 +111,12 @@ void CDenyListMgr::readfile(void)
 			p = fgets(str, 1024, fp);
 		}
 		fclose(fp);
-	}
+	}*/
 }
 
 void CDenyListMgr::savefile(void)
 {
-	FILE *fp = fopen("./data/denylist.dta", "w");
+	/*FILE *fp = fopen("./data/denylist.dta", "w");
 	if (fp) 
 	{
 		for (int i = 0; i < m_list.size(); i++)
@@ -133,5 +133,5 @@ void CDenyListMgr::savefile(void)
 			}
 		}
 		fclose(fp);
-	}
+	}*/
 }
