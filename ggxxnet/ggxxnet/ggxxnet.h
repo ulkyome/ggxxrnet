@@ -266,7 +266,7 @@ public:
 		m_frameCount	= 0;
 		m_format		= -1;
 		m_playing		= false;
-		strcpy(m_curdir, "data/replay"); //путь до реплеев
+		strcpy(m_curdir, "data/replay"); //РїСѓС‚СЊ РґРѕ СЂРµРїР»РµРµРІ
 	}
 	~CReplayModeInfo(void)
 	{
@@ -388,6 +388,7 @@ void convertModulePath(char* p_out, char* p_in);
 DWORD getGGXXMODE2(void);
 
 //-------------------------------debug
+void DB_TEST(char* fmt, ...);
 void DBGOUT_NET(char* fmt, ...);
 void DBGOUT_LOG(char* fmt, ...);
 void WRITE_DEBUGLOG(char* p_cause);

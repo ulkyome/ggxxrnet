@@ -530,7 +530,7 @@ void ggn_input(void)
 
 			if (**GGXX_ggnv_InputDataPtr & 0x00400040)
 			{
-				// çƒê∂íÜé~
+				// –å–î—í¬∂‚Äô‚Ä†–ã~
 				for (int i = 0; i < g_netMgr->m_queueSize; i++)
 				{
 					g_netMgr->m_key[i] = **GGXX_ggnv_InputDataPtr;
@@ -1857,8 +1857,8 @@ void ggn_syncRandomTable(int p_timing)
 void ggn_softReset(void)
 {
 	// When you immediately cut in a state where the direct recipient is because the replay is not sent until the last necessary grace time
-	// Issue ÇPDIt is not too late and data reception of spectators has not kept pace
-	// Issue ÇQDexe Not sent until the last when dropped itself (although this is not the way ...)
+	// Issue ‚ÄöPDIt is not too late and data reception of spectators has not kept pace
+	// Issue ‚ÄöQDexe Not sent until the last when dropped itself (although this is not the way ...)
 	Sleep(300);
 	if (*GGXX_MODE1 & 0x200000)			// NetPlay
 	{
@@ -2023,7 +2023,7 @@ void ggn_endBattle(void)
 		// Add a termination to replay
 		g_netMgr->disconnect("endbattle");
 	}
-	else if (*GGXX_MODE1 & 0x800000) // äœêÌèIóπ
+	else if (*GGXX_MODE1 & 0x800000) // –â–ü—í–Ω–èI‚Äî‚Ññ
 	{
 		// Add a termination to replay
 		g_netMgr->disconnect("endbattle");
@@ -2066,7 +2066,7 @@ bool ggn_procReplay(void)
 	}
 	
 /* Drawing */
-	GGXX_DrawText2("REPLAY", 40, 53, 5); //ÚÂÍÒÚ ‚ ÂÔÎÂÂ Ó„Î‡‚ÎÂÌËÂ
+	GGXX_DrawText2("REPLAY", 40, 53, 5); //—Ç–µ–∫—Å—Ç –≤ —Ä–µ–ø–ª–µ–µ –æ–≥–ª–∞–≤–ª–µ–Ω–∏–µ
 
 	static int c1 = 0, c2 = 0x08;
 
@@ -3228,10 +3228,13 @@ void configServer(void)
 
 	delete buf;
 }
+
 void enterServer(bool p_busy)
 {
 	const int bufsize = 1024 * 1024;
 	char* buf = new char[bufsize];
+	char* rbuf = new char[bufsize];
+
 	char *server, *script;
 	getscpiptaddr(server, script);
 
@@ -3254,7 +3257,6 @@ void enterServer(bool p_busy)
 		g_setting.useEx);
 
 	int res_size = internet_post(buf, strlen(buf), bufsize, server, script);
-
 	/*
 	Set the CW to deal with synchronization shift with a small number of round-off error
 	Occurrence condition is but if that called HttpSendRequest in internet_post
@@ -3271,31 +3273,31 @@ void enterServer(bool p_busy)
 	Value& user_port = dataJson["user_port"];
 	Value& time = dataJson["time"];
 	Value& server_pass = dataJson["server_pass"];
+	
+	char* test;
+	sprintf(test, "test: %s\n", result.GetString());
 
-	MessageBox(*GGXX_HWND, result.GetString(), "Ok", MB_OK);
+	DB_TEST(test);
 	char* errM;
-
-	if (result.GetString() == "OK") {
+	
+	if (!strcmp(result.GetString(),"OK")) {
 		MessageBox(*GGXX_HWND, result.GetString(), "LOL", MB_OK);
 	}
-	else if (result.GetString() == "ok") {
-		MessageBox(*GGXX_HWND, result.GetString(), "LOL", MB_OK);
-	}
-	else if (result.GetString() == "ERORR") {
+	else if (!strcmp(result.GetString(),"ERORR")) {
 		sprintf(errM, "Error %s\n", result.GetString());
 		DBGOUT_NET(errM);
 		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
 		return;
 		DestroyWindow(*GGXX_HWND);
 	}
-	else if (result.GetString() == "ERORR#AA01") {
+	else if (!strcmp(result.GetString(),"ERORR#AA01")) {
 		sprintf(errM, "Error %s\n", result.GetString());
 		DBGOUT_NET(errM);
 		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
 		return;
 		DestroyWindow(*GGXX_HWND);
 	}
-	else if (result.GetString() == "ERORR#AA02") {
+	else if (!strcmp(result.GetString(),"ERORR#AA02")) {
 		sprintf(errM, "Error %s\n", result.GetString());
 		DBGOUT_NET(errM);
 		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
@@ -3330,7 +3332,6 @@ void enterServer(bool p_busy)
 	*end = '\0';*/
 
 	g_nodeMgr->setOwnNode(ptr);
-
 	DBGOUT_NET("enterServer end\n");
 }
 
@@ -4355,6 +4356,30 @@ void DBGOUT_LOG(char* fmt, ...)
 
 	va_end(ap);
 #endif
+}
+
+void DB_TEST(char* fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+
+	char buf[1024];
+	vsprintf(buf, fmt, ap);
+
+	OutputDebugString(buf);
+
+	char fname[256];
+	char logfname[256];
+	sprintf(logfname, "./logs/log_test_%s.log", "0000-00-00");
+	convertModulePath(fname, logfname);
+	FILE *fp = fopen(fname, "a");
+	if (fp)
+	{
+		fprintf(fp, buf);
+		fclose(fp);
+	}
+
+	va_end(ap);
 }
 
 void DBGOUT_NET(char* fmt, ...)
