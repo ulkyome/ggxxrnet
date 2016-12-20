@@ -3274,14 +3274,14 @@ void enterServer(bool p_busy)
 	Value& time = dataJson["time"];
 	Value& server_pass = dataJson["server_pass"];
 	
-	char* test;
+	/*char* test;
 	sprintf(test, "test: %s\n", result.GetString());
 
-	DB_TEST(test);
+	DB_TEST(test);*/
 	char* errM;
 	
 	if (!strcmp(result.GetString(),"OK")) {
-		MessageBox(*GGXX_HWND, result.GetString(), "LOL", MB_OK);
+		//good
 	}
 	else if (!strcmp(result.GetString(),"ERORR")) {
 		sprintf(errM, "Error %s\n", result.GetString());
@@ -3310,28 +3310,15 @@ void enterServer(bool p_busy)
 		DBGOUT_NET(errM);
 		MessageBox(*GGXX_HWND, errM, "Ok", MB_OK);
 		return;
-		//DestroyWindow(*GGXX_HWND);
-	}
-
-	char* ptr;
-	sprintf(ptr, "%s:%s", user_ip.GetString(), user_port.GetString());
-
-	/*char* ptr = strstr(buf, "##head##");
-	//MessageBox(*GGXX_HWND, ptr, "Ok", MB_OK);*/
-	/*if (ptr == NULL){
-		DBGOUT_NET("Server offline\n");
-		MessageBox(*GGXX_HWND, "Error server offline.\n", "Ok", MB_OK);
 		DestroyWindow(*GGXX_HWND);
-		return;
 	}
 
-	char* end = strstr(buf, "##foot##");
-	//MessageBox(*GGXX_HWND, end, "Ok", MB_OK);
-	if (end==NULL) return;
-	ptr += 8;
-	*end = '\0';*/
+	sprintf(buf, "%s:%s",
+		user_ip.GetString(), 
+		user_port.GetString()
+	);
 
-	g_nodeMgr->setOwnNode(ptr);
+	g_nodeMgr->setOwnNode(buf);
 	DBGOUT_NET("enterServer end\n");
 }
 
@@ -3386,8 +3373,8 @@ void readServer(void)
 	char *server, *script;
 	getscpiptaddr(server, script);
 
-	const int bufsize = 1024*1024;
-	char* buf = new char[bufsize]; // 1M
+	const int bufsize = 1024 * 1024;
+	char* buf = new char[bufsize];
 	sprintf(buf, "{\"cmd\":\"read\"}");
 	int readsize = internet_post(buf, strlen(buf), bufsize, server, script);
 
@@ -3399,7 +3386,45 @@ void readServer(void)
 	*/
 	SETFCW(DEFAULT_CW);
 
-	/* Extracting a section of the header-footer (since that may be added by including free mackerel) */
+	Document dataJson;
+	dataJson.Parse(buf);
+
+	Value& result = dataJson["result"];
+	Value& time = dataJson["time"];
+	Value& server_pass = dataJson["server_pass"];
+	Value& user_count = dataJson["user_count"];
+	const Value& userData = dataJson["user"];
+	assert(userData.IsArray());
+
+	char* userKeyArr;
+	for (int i = 0; i < userData.Size(); i++) {
+		char* addr;
+		char* prm;
+		char* name;
+
+		//MessageBox(*GGXX_HWND, userData[i]["name"].GetString(), "Ok", MB_OK);
+		sprintf(addr, "%s:%s", userData[i]["ip"].GetString(), userData[i]["port"].GetString());
+		sprintf(name, "%s", userData[i]["name"].GetString());
+		/*sprintf(prm, "%s%s%s%s%s%s%s%s%s%s", 
+			userData[i]["busy"].GetString(), 
+			userData[i]["lobby_ver"].GetString(),
+			userData[i]["useEx"].GetString(),
+			0,
+			0,
+			0,
+			0,
+			0,
+			userData[i]["rank"].GetString(),
+			userData[i]["delay"].GetString()
+		);
+		*/
+		ENTERCS(&g_netMgr->m_csNode);
+
+		g_nodeMgr->addNode(addr, name, userData[i]["busy"].GetString(), false);
+
+		LEAVECS(&g_netMgr->m_csNode);
+	}
+	/*
 	char* ptr = strstr(buf, "##head##");
 	if (ptr==NULL) { delete buf; return; }
 	char* end = strstr(buf, "##foot##");
@@ -3410,7 +3435,7 @@ void readServer(void)
 	else { delete buf; return; }
 	*end = '\0';
 
-	/* Add node removes the line break */
+
 	int pos = 0;
 	while (pos < readsize)
 	{
@@ -3419,7 +3444,7 @@ void readServer(void)
 		char *ret = __mbschr(&ptr[pos], '\n');
 		if (ret) *ret = '\0';
 
-		/* name @ addr: the port% param format */
+		// name @ addr: the port% param format 
 		char* name = &ptr[pos];
 		char* dlm1 = __mbschr(&ptr[pos], '@');
 		char* dlm2 = __mbschr(&ptr[pos], '%');
@@ -3428,7 +3453,7 @@ void readServer(void)
 		char* prm  = dlm2+1;
 		char* win  = dlm3+1;
 
-		/* Ignore the incompatible version to lobby parameters */
+		//Ignore the incompatible version to lobby parameters
 		BYTE ver = CHR_HEX2INT(prm[1]) * 16 + CHR_HEX2INT(prm[2]);
 		if (ver == LOBBY_VER)
 		{
@@ -3446,7 +3471,7 @@ void readServer(void)
 			}
 		}
 		pos = ret - ptr + 1;
-	}
+	}*/
 
 	delete buf;
 
